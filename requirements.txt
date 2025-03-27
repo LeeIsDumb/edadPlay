@@ -6,5 +6,5 @@ librosa
 numpy==1.26.4
 opencv-python-headless
 requests
-pytube
 yt_dlp
+pytube
