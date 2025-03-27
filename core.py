@@ -35,7 +35,7 @@ def detectar_cortes(clip):
     return cortes_por_minuto
 
 def analizar_audio(ruta_video):
-    audio_path = "audio_temp.wav"
+    audio_path = "/tmp/audio_temp.wav"
     clip = mp.VideoFileClip(ruta_video)
     clip.audio.write_audiofile(audio_path, verbose=False, logger=None)
 
@@ -61,7 +61,7 @@ def calcular_complejidad_visual(ruta_video):
     return np.mean(complejidades)
 
 def calcular_densidad_sonora(ruta_video):
-    audio_path = "audio_temp.wav"
+    audio_path = "/tmp/audio_temp.wav"
     clip = mp.VideoFileClip(ruta_video)
     clip.audio.write_audiofile(audio_path, verbose=False, logger=None)
 
