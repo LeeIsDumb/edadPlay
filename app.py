@@ -1,7 +1,7 @@
 import streamlit as st
 from urllib.request import urlretrieve
 import os
-from main import analizar_video
+from core import analizar_video
 
 # Configuración inicial
 st.set_page_config(page_title="Clasificador de Edad para Vídeos", page_icon="🎬", layout="wide")
