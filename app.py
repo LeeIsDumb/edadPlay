@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import os
 import yt_dlp
-from main import analizar_video
+from core import analizar_video
 
 st.set_page_config(page_title="EdadPlay", page_icon="🎬", layout="wide")
 
