@@ -37,7 +37,7 @@ def analizar_video(ruta_video):
 
     return edad_recomendada, informe
 
-def detectar_cortes(clip, intervalo=1.0, umbral=0.5):
+def detectar_cortes(clip, intervalo=1.0, umbral=0.8):
     cambios = 0
     anterior_hist = None
     for t in np.arange(0, clip.duration, intervalo):
@@ -75,7 +75,7 @@ def calcular_complejidad_visual(ruta_video, sample_rate=30):
         if not ret:
             break
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        edges = cv2.Canny(gray, 100, 200)
+        edges = cv2.Canny(gray, 200, 400)
         contornos, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         complejidades.append(len(contornos))
 
@@ -89,7 +89,7 @@ def calcular_densidad_sonora(ruta_video):
         clip.audio.write_audiofile(audio_temp.name, verbose=False, logger=None)
         y, sr = librosa.load(audio_temp.name, sr=None)
 
-        onset_frames = librosa.onset.onset_detect(y=y, sr=sr, units='frames')
+        onset_frames = librosa.onset.onset_detect(y=y, sr=sr, backtrack=True, delta=0.3, units='frames')
         onset_times = librosa.frames_to_time(onset_frames, sr=sr)
 
         duracion_min = clip.duration / 60
