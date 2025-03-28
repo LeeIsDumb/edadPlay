@@ -152,8 +152,7 @@ def generar_informe(analisis_intervalos):
         conteo[intervalo['edad']] += 1
 
     edad_final = max(conteo, key=conteo.get)
-    icono = PARAMETROS_EDAD[edad_final]['icon']
-    texto = f"{icono} Edad recomendada general: {edad_final}\n\n"
+    texto = f"Edad recomendada general: {edad_final}\n\n"
 
     return edad_final, texto, analisis_intervalos
 
