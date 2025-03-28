@@ -62,7 +62,10 @@ if "ruta_video" not in st.session_state:
 # Inputs
 if not st.session_state["procesando"] and st.session_state["ruta_video"] is None:
     video_file = st.file_uploader("🎞️ Sube un vídeo (máx 200 MB)", type=["mp4", "mov", "avi"])
-    video_url = st.text_input("🌐 O pega URL de YouTube o Vimeo:")
+    
+    if st.session_state["ruta_video"] is None and not st.session_state["procesando"]:
+        st.warning("⬆️ Carga un vídeo o introduce una URL válida para comenzar.")
+video_url = st.text_input("🌐 O pega URL de YouTube o Vimeo:")
 
     if video_file:
         if video_file.size > 200 * 1024 * 1024:
@@ -93,6 +96,7 @@ if not st.session_state["procesando"] and st.session_state["ruta_video"] is None
 
 # Botón de análisis
 if st.session_state["ruta_video"] and not st.session_state["procesando"]:
+    st.markdown("✅ Vídeo listo para analizar.")
     if st.button("🔍 Analizar vídeo ahora", use_container_width=True):
         st.session_state["procesando"] = True
         st.rerun()

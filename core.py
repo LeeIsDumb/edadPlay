@@ -126,10 +126,10 @@ def mostrar_grafico_y_resumen(intervalos):
     fig, ax = plt.subplots(figsize=(10, 6))
     x = [f"{int(i['inicio'])}-{int(i['fin'])}" for i in intervalos]
 
-    ax.plot(x, df['cortes'], label="Cortes/min")
+    ax.plot(x, df['cortes'], label="Cortes/min", color="#FFB6C1")
     ax.plot(x, df['complejidad'], label="Complejidad")
-    ax.plot(x, df['volumen'], label="Volumen (dB)")
-    ax.plot(x, df['densidad_sonora'], label="Densidad sonora")
+    ax.plot(x, df['volumen'], label="Volumen (dB)", color="#90EE90")
+    ax.plot(x, df['densidad_sonora'], label="Densidad sonora", color="#FFD700")
 
     ax.axhline(8, color='gray', linestyle='--', linewidth=1, label="Límite edad 7-12")
 
