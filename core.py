@@ -37,12 +37,14 @@ def analizar_video(ruta_video):
 
     return edad_recomendada, informe
 
-def detectar_cortes(clip, intervalo=1.0, umbral=0.8):
+def detectar_cortes(clip, intervalo=1.0, umbral=0.6):
     cambios = 0
     anterior_hist = None
+    total_checks = 0
     for t in np.arange(0, clip.duration, intervalo):
         frame = clip.get_frame(t)
-        hist = cv2.calcHist([frame], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256])
+        frame = cv2.resize(frame, (320, 180))
+        hist = cv2.calcHist([frame], [0, 1, 2], None, [8,8,8], [0,256]*3)
         hist = cv2.normalize(hist, hist).flatten()
 
         if anterior_hist is not None:
@@ -50,7 +52,10 @@ def detectar_cortes(clip, intervalo=1.0, umbral=0.8):
             if diferencia < umbral:
                 cambios += 1
         anterior_hist = hist
-    return cambios / (clip.duration / 60)
+        total_checks += 1
+
+    cortes_por_minuto = cambios / (clip.duration / 60)
+    return round(cortes_por_minuto, 2)
 
 # Optimizado: Análisis de audio usando memoria y cálculo en tiempo real
 def analizar_audio(ruta_video):
@@ -63,24 +68,27 @@ def analizar_audio(ruta_video):
         return float(np.mean(np.abs(volumen_db)))
 
 # Optimizado: Complejidad visual promedio (análisis eficiente usando sampling de frames)
-def calcular_complejidad_visual(ruta_video, sample_rate=30):
+def calcular_complejidad_visual(ruta_video, sample_frames=30):
     cap = cv2.VideoCapture(ruta_video)
-    complejidades = []
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    frame_step = max(1, int(total_frames / sample_rate))
+    step = max(1, total_frames // sample_frames)
+    complejidades = []
 
-    for i in range(0, total_frames, frame_step):
+    for i in range(0, total_frames, step):
         cap.set(cv2.CAP_PROP_POS_FRAMES, i)
         ret, frame = cap.read()
         if not ret:
-            break
+            continue
+        frame = cv2.resize(frame, (320, 180))
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        edges = cv2.Canny(gray, 200, 400)
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        edges = cv2.Canny(blurred, 100, 200)
         contornos, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         complejidades.append(len(contornos))
 
     cap.release()
-    return float(np.mean(complejidades))
+    complejidad_media = np.mean(complejidades) if complejidades else 0
+    return round(complejidad_media, 2)
 
 # Optimizado: Densidad sonora usando detección eficiente de onsets (librosa optimizado)
 def calcular_densidad_sonora(ruta_video):
@@ -89,11 +97,12 @@ def calcular_densidad_sonora(ruta_video):
         clip.audio.write_audiofile(audio_temp.name, verbose=False, logger=None)
         y, sr = librosa.load(audio_temp.name, sr=None)
 
-        onset_frames = librosa.onset.onset_detect(y=y, sr=sr, backtrack=True, delta=0.3, units='frames')
-        onset_times = librosa.frames_to_time(onset_frames, sr=sr)
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+        picos = librosa.util.peak_pick(onset_env, pre_max=10, post_max=10, pre_avg=10, post_avg=10, delta=1.0, wait=10)
 
         duracion_min = clip.duration / 60
-        return len(onset_times) / duracion_min
+        densidad = len(picos) / duracion_min
+        return round(densidad, 2)
 
 def clasificar_video(cortes, volumen, complejidad, densidad_sonora):
     razones = []
