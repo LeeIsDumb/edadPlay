@@ -32,7 +32,12 @@ if not st.session_state["procesando"] and st.session_state["ruta_video"] is None
         ruta_video = "/tmp/video_descargado.mp4"
         try:
             with st.spinner('Descargando vídeo...'):
-                ydl_opts = {'outtmpl': ruta_video, 'format': 'mp4[height<=480]'}
+                ydl_opts = {
+                    'outtmpl': 'video_descargado.mp4',
+                    'format': 'mp4[height<=480]',
+                    'noplaylist': True,
+                    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                }
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([video_url])
             st.session_state["ruta_video"] = ruta_video
