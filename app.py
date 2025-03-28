@@ -80,11 +80,11 @@ st.markdown("---")
 st.markdown("## 📌 Recomendaciones generales según la edad")
 st.table({
     "Edad": ["0–3 años", "4–6 años", "7–12 años", "13+ años"],
-    "Cortes/min": ["<2", "2–4", "5–8", "8+"],
+    "Cortes visuales/min": ["<2", "2–4", "5–8", "8+"],
     "Complejidad Visual (objetos/frame)": ["<50", "50-100", "100-150", "150+"],
     "Volumen Promedio (dB)": ["<60", "60–70", "70–80", "80–85"],
     "Densidad Sonora (sonidos/min)": ["<2", "2–4", "4–6", "6+"],
-    "Tiempo pantalla/día": ["Evitar", "Máx 1 hora", "1-2 horas", "Equilibrado"]
+    "Tiempo maximo pantalla/día": ["Evitar", "1 hora", "1-2 horas", "Equilibrado"]
 })
 
 st.markdown("---")

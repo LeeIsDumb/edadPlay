@@ -72,14 +72,20 @@ def generar_informe(analisis_intervalos):
     conteo_edades = {"0-3":0, "4-6":0, "7-12":0, "13+":0}
     for intervalo in analisis_intervalos:
         conteo_edades[intervalo['edad']] += 1
+
     edad_recomendada = max(conteo_edades, key=conteo_edades.get)
+
     informe = f"Edad recomendada general: {edad_recomendada}\n\n"
-    informe += "**Detalles por intervalos problemáticos:**\n"
+    informe += "### Detalles por intervalos analizados:\n"
+
     for i in analisis_intervalos:
-        if i['edad'] != edad_recomendada:
-            informe += (f"- Intervalo {int(i['inicio'])}-{int(i['fin'])} seg. → edad {i['edad']} | "
-                        f"Cortes: {i['cortes']}/min, Volumen: {i['volumen']}dB, "
-                        f"Complejidad: {i['complejidad']}, Densidad sonora: {i['densidad_sonora']}/min\n")
+        informe += (f"- Intervalo {int(i['inicio'])}-{int(i['fin'])} seg → "
+                    f"Edad: {i['edad']} | "
+                    f"Cortes: {i['cortes']}/min, "
+                    f"Volumen: {i['volumen']} dB, "
+                    f"Complejidad: {i['complejidad']} objetos/frame, "
+                    f"Densidad sonora: {i['densidad_sonora']} sonidos/min\n")
+
     return edad_recomendada, informe
 
 def analizar_video(ruta_video, duracion_intervalo=60):
