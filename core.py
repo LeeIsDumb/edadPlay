@@ -13,12 +13,27 @@ PARAMETROS_EDAD = {
 
 def analizar_video(ruta_video):
     clip = mp.VideoFileClip(ruta_video)
+
+    progress_bar = st.progress(0)
+    progress_bar.progress(10, "Detectando cortes visuales...")
     cortes = detectar_cortes(clip)
+
+    progress_bar.progress(40, "Analizando volumen de audio...")
     volumen_promedio = analizar_audio(ruta_video)
+
+    progress_bar.progress(60, "Calculando complejidad visual...")
     complejidad_visual = calcular_complejidad_visual(ruta_video)
+
+    progress_bar.progress(80, "Calculando densidad sonora...")
     densidad_sonora = calcular_densidad_sonora(ruta_video)
+
     edad_recomendada, razones = clasificar_video(cortes, volumen_promedio, complejidad_visual, densidad_sonora)
+
+    progress_bar.progress(100, "Análisis completado")
+    progress_bar.empty()
+
     informe = generar_informe(cortes, volumen_promedio, complejidad_visual, densidad_sonora, edad_recomendada, razones)
+
     return edad_recomendada, informe
 
 def detectar_cortes(clip):
