@@ -43,9 +43,14 @@ if st.session_state["ruta_video"]:
     if st.button("🔍 Analizar vídeo ahora"):
         placeholder = st.empty()
         progress_bar = st.progress(0)
+        
         placeholder.info('Analizando vídeo, por favor espera...')
-        edad, reporte = analizar_video(st.session_state["ruta_video"], progress_bar)
-        placeholder.success("✅ ¡Análisis completado!")
+        progress_bar.progress(10, "Procesando vídeo (puede tardar unos minutos)...")
+        
+        edad, reporte = analizar_video(st.session_state["ruta_video"])
+        
+        progress_bar.progress(100, "¡Análisis completado!")
+        placeholder.success("✅ ¡Análisis finalizado con éxito!")
         progress_bar.empty()
 
         st.markdown(f"<h2 style='color:#8B008B;'>Edad recomendada: {edad}</h2>", unsafe_allow_html=True)
