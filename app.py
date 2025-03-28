@@ -5,16 +5,61 @@ from core import analizar_video
 
 st.set_page_config(page_title="EdadPlay", page_icon="🎬", layout="wide")
 
-st.markdown("<h1 style='text-align:center;color:#4B0082;'>🎬 EdadPlay</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align:center;'>Analiza vídeos y obtén una edad recomendada según criterios científicos.</h3>", unsafe_allow_html=True)
+# Estilos responsivos y personalizados
+st.markdown("""
+    <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", sans-serif;
+    }
 
-# Inicializar estados
+    @media screen and (max-width: 768px) {
+        h1, h2, h3 {
+            font-size: 1.2em !important;
+            text-align: center !important;
+        }
+        .element-container {
+            padding: 0.5rem !important;
+        }
+        .stButton > button {
+            width: 100% !important;
+        }
+        .stTextInput > div > div > input {
+            font-size: 1rem;
+        }
+        .stTable {
+            overflow-x: auto !important;
+        }
+    }
+
+    .stButton > button {
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+
+    h1, h2, h3 {
+        text-align: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Título
+st.markdown("<h1 style='color:#4B0082;'>🎬 EdadPlay</h1>", unsafe_allow_html=True)
+st.markdown("""
+<div style='text-align:center; font-size:1.1em; margin-bottom:1em;'>
+📊 Analiza vídeos y obtén una edad recomendada basada en criterios científicos.
+</div>
+""", unsafe_allow_html=True)
+
+# Estado inicial
 if "procesando" not in st.session_state:
     st.session_state["procesando"] = False
 if "ruta_video" not in st.session_state:
     st.session_state["ruta_video"] = None
 
-# Mostrar inputs solo si no se está procesando
+# Inputs
 if not st.session_state["procesando"] and st.session_state["ruta_video"] is None:
     video_file = st.file_uploader("🎞️ Sube un vídeo (máx 200 MB)", type=["mp4", "mov", "avi"])
     video_url = st.text_input("🌐 O pega URL de YouTube o Vimeo:")
@@ -33,7 +78,7 @@ if not st.session_state["procesando"] and st.session_state["ruta_video"] is None
         try:
             with st.spinner('Descargando vídeo...'):
                 ydl_opts = {
-                    'outtmpl': 'video_descargado.mp4',
+                    'outtmpl': ruta_video,
                     'format': 'mp4[height<=480]',
                     'noplaylist': True,
                     'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -46,13 +91,13 @@ if not st.session_state["procesando"] and st.session_state["ruta_video"] is None
             st.error(f"⚠️ Error descargando vídeo: {e}")
             st.session_state["ruta_video"] = None
 
-# Botón de analizar vídeo desaparece durante el procesamiento
+# Botón de análisis
 if st.session_state["ruta_video"] and not st.session_state["procesando"]:
-    if st.button("🔍 Analizar vídeo ahora"):
+    if st.button("🔍 Analizar vídeo ahora", use_container_width=True):
         st.session_state["procesando"] = True
         st.rerun()
 
-# Proceso de análisis con barra de progreso detallada
+# Procesamiento
 if st.session_state["procesando"]:
     placeholder = st.empty()
     placeholder.info('Analizando vídeo, por favor espera...')
@@ -71,13 +116,14 @@ if st.session_state["procesando"]:
     st.session_state["ruta_video"] = None
     st.session_state["procesando"] = False
 
-    if st.button("🔄 Analizar otro vídeo"):
+    if st.button("🔄 Analizar otro vídeo", use_container_width=True):
         st.session_state.clear()
         st.rerun()
 
-# Tablas visibles siempre
+# Tabla de criterios siempre visible
 st.markdown("---")
 st.markdown("## 📌 Recomendaciones generales según la edad")
+st.markdown("<div style='overflow-x:auto;'>", unsafe_allow_html=True)
 st.table({
     "Edad": ["0–3 años", "4–6 años", "7–12 años", "13+ años"],
     "Cortes visuales/min": ["<2", "2–4", "5–8", "8+"],
@@ -86,6 +132,7 @@ st.table({
     "Densidad Sonora (sonidos/min)": ["<2", "2–4", "4–6", "6+"],
     "Tiempo maximo pantalla/día": ["Evitar", "1 hora", "1-2 horas", "Equilibrado"]
 })
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("---")
 st.markdown("## 🛠️ **¿Cómo calculamos los indicadores del vídeo?**")
