@@ -50,7 +50,7 @@ if not st.session_state["procesando"] and st.session_state["ruta_video"] is None
 if st.session_state["ruta_video"] and not st.session_state["procesando"]:
     if st.button("🔍 Analizar vídeo ahora"):
         st.session_state["procesando"] = True
-        st.experimental_rerun()
+        st.rerun()
 
 # Proceso de análisis con barra de progreso detallada
 if st.session_state["procesando"]:
