@@ -88,7 +88,7 @@ def generar_informe(analisis_intervalos):
                     f"Volumen promedio: {i['volumen']} dB, "
                     f"Densidad sonora: {i['densidad_sonora']} sonidos/min\n")
 
-    return edad_recomendada, informe
+    return edad_recomendada, informe, analisis_intervalos
 
 def analizar_video(ruta_video, duracion_intervalo=60):
     clip = mp.VideoFileClip(ruta_video)
