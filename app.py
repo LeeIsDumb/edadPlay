@@ -53,10 +53,7 @@ if st.session_state["procesando"]:
     progress_bar = st.progress(0)
     placeholder.info('Analizando vídeo, por favor espera...')
 
-    edad, reporte = analizar_video(
-        st.session_state["ruta_video"],
-        progress_bar=progress_bar
-    )
+    edad, reporte = analizar_video(st.session_state["ruta_video"])
 
     placeholder.success("✅ ¡Análisis finalizado con éxito!")
     progress_bar.empty()
