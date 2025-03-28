@@ -9,7 +9,7 @@ st.set_page_config(page_title="EdadPlay", page_icon="🎬", layout="wide")
 st.markdown("""
 <style>
     html, body {
-        background-color: #fdfcfa;
+        background-color: #0F0F0F;
         font-family: 'Poppins', sans-serif;
         color: #333333;
     }
@@ -19,7 +19,7 @@ st.markdown("""
     }
 
     .stButton button {
-        background-color: #c3aed6;
+        background-color: #20D86A;
         color: white;
         font-weight: 600;
         border: none;
@@ -28,7 +28,7 @@ st.markdown("""
     }
 
     .stButton button:hover {
-        background-color: #a58ecf;
+        background-color: #00953C;
     }
 
     @media screen and (max-width: 768px) {
@@ -42,7 +42,7 @@ st.markdown("""
 st.markdown("""
 <h1 style='text-align:center;'>🎬 EdadPlay</h1>
 <div style='text-align:center; font-size:1.1em; margin-bottom:1em;'>
-Analiza vídeos infantiles y obtén una recomendación de edad basada en ciencia.
+Analiza vídeos y obtén una recomendación de edad basada en ciencia para tus hijos.
 </div>
 """, unsafe_allow_html=True)
 
@@ -123,45 +123,48 @@ st.dataframe({
     "Densidad sonora (sonidos/min)": ["<2", "2–4", "4–6", "6+"],
     "Pantalla diaria": ["Evitar", "1h", "1–2h", "Equilibrado"]
 }, use_container_width=True)
+st.markdown("Se recomienda que los menores de 6 años no estén expuestos a pantallas, dado su impacto en el desarrollo neurológico, emocional y social a esta edad.")
 
 st.markdown("---")
 st.subheader("🔬 ¿Cómo analizamos el contenido?")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("""
+    ### 📌 1. Cortes visuales por minuto
+    - Se analiza cada segundo.
+    - Se compara el histograma de color entre fotogramas.
+    - Si la diferencia supera cierto umbral, se considera un corte visual.
+    - Se calcula la media por minuto.
+    
+    ### 🎨 2. Complejidad visual
+    - Se toman muestras representativas.
+    - Cada fotograma se procesa con detección de bordes.
+    - Se cuenta el número de contornos presentes.
+    """)
+
+with col2:
+    st.markdown("""
+    ### 🔊 3. Volumen promedio (dB)
+    - Se extrae el audio y se calcula la energía (RMS).
+    - Se convierte a decibelios.
+    - Se obtiene un promedio del volumen.
+    
+    ### 🎵 4. Densidad sonora
+    - Se detectan los eventos auditivos diferenciados ("onsets").
+    - Se filtran los sonidos muy cercanos.
+    - Se calcula cuántos nuevos sonidos ocurren por minuto.
+    """)
+
+st.markdown("---")
+st.markdown("### 📚 Estudios científicos de referencia")
+
 st.markdown("""
-### 📌 1. Cortes visuales por minuto
-
-Contamos cada cambio visual significativo:
-- Se analiza cada segundo.
-- Se compara el histograma de color entre fotogramas.
-- Si la diferencia supera cierto umbral, se considera un corte visual.
-- Se calcula la media por minuto.
-
-### 🎨 2. Complejidad visual
-
-Contamos objetos o contornos diferenciables por escena:
-- Se toman muestras representativas.
-- Cada fotograma se procesa con detección de bordes.
-- Se cuenta el número de contornos presentes.
-
-### 🔊 3. Volumen promedio (dB)
-
-- Se extrae el audio y se calcula la energía (RMS).
-- Se convierte a decibelios.
-- Se obtiene un promedio del volumen.
-
-### 🎵 4. Densidad sonora
-
-- Se detectan los eventos auditivos diferenciados ("onsets").
-- Se filtran los sonidos muy cercanos.
-- Se calcula cuántos nuevos sonidos ocurren por minuto.
-
----
-### 📚 Estudios científicos de referencia
-
-1. **OMS (2019)**: Recomendación de máximo 1h de pantalla diaria para menores de 5 años. [Ver estudio](https://apps.who.int/iris/handle/10665/311664)
-2. **AAP (2020)**: Evitar pantallas antes de los 18 meses. Contenido educativo y limitado entre 2 y 5 años. [Ver estudio](https://publications.aap.org/pediatrics/article/138/5/e20162591/60321/Media-and-Young-Minds)
-3. **Christakis (2011)**: Ritmo rápido de vídeos vinculado con déficit de atención. [Ver estudio](https://doi.org/10.1542/peds.2011-2071)
-4. **UNICEF (2021)**: Requieren contenido pausado y relaciones reales. [Ver estudio](https://www.unicef.org/reports/state-worlds-children-2017)
-5. **CPS (2019)**: Máximo 1h diaria de contenido lento y supervisado. [Ver estudio](https://cps.ca/en/documents/position/screen-time-and-young-children)
-6. **Gentile et al. (2017)**: Vídeos violentos elevan el cortisol infantil. [Ver estudio](https://jamanetwork.com/journals/jamapediatrics/fullarticle/2612159)
+1. **OMS (2019)**: Recomendación de máximo 1h de pantalla diaria para menores de 5 años. [Ver estudio](https://apps.who.int/iris/handle/10665/311664)  
+2. **AAP (2020)**: Evitar pantallas antes de los 18 meses. Contenido educativo y limitado entre 2 y 5 años. [Ver estudio](https://publications.aap.org/pediatrics/article/138/5/e20162591/60321/Media-and-Young-Minds)  
+3. **Christakis (2011)**: Ritmo rápido de vídeos vinculado con déficit de atención. [Ver estudio](https://doi.org/10.1542/peds.2011-2071)  
+4. **UNICEF (2021)**: Requieren contenido pausado y relaciones reales. [Ver estudio](https://www.unicef.org/reports/state-worlds-children-2017)  
+5. **CPS (2019)**: Máximo 1h diaria de contenido lento y supervisado. [Ver estudio](https://cps.ca/en/documents/position/screen-time-and-young-children)  
+6. **Gentile et al. (2017)**: Vídeos violentos elevan el cortisol infantil. [Ver estudio](https://jamanetwork.com/journals/jamapediatrics/fullarticle/2612159)  
 7. **OMS (2018)**: Riesgo de adicción digital por exposición excesiva. [Ver estudio](https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder)
 """)

@@ -215,6 +215,8 @@ def mostrar_grafico_y_resumen(intervalos):
 
     with col2:
         st.markdown("### 📌 Resumen visual de métricas")
+
+    with st.container():
         col_v1, col_v2 = st.columns(2)
         with col_v1:
             st.metric("Cortes visuales/min (máx)", f"{df['cortes'].max()}", help="Promedio de cambios de escena por minuto")
@@ -223,3 +225,4 @@ def mostrar_grafico_y_resumen(intervalos):
             st.metric("Volumen promedio (dB)", f"{df['volumen'].max()}", help="Nivel de intensidad sonora en decibelios")
             st.metric("Densidad sonora (máx)", f"{df['densidad_sonora'].max()}", help="Cantidad de sonidos diferenciados por minuto")
         style_metric_cards()
+
