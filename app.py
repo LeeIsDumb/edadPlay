@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import yt_dlp
-from core import analizar_video
+from core import analizar_video, mostrar_grafico_y_resumen
 
 st.set_page_config(page_title="EdadPlay", page_icon="🎬", layout="wide")
 
@@ -102,7 +102,8 @@ if st.session_state["procesando"]:
     placeholder = st.empty()
     placeholder.info('Analizando vídeo, por favor espera...')
 
-    edad, reporte = analizar_video(st.session_state["ruta_video"])
+    edad, reporte, intervalos = analizar_video(st.session_state["ruta_video"])
+    mostrar_grafico_y_resumen(intervalos)
 
     placeholder.success("✅ ¡Análisis finalizado con éxito!")
 

@@ -4,6 +4,8 @@ import librosa
 import cv2
 import tempfile
 import streamlit as st
+import matplotlib.pyplot as plt
+import pandas as pd
 
 PARAMETROS_EDAD = {
     '0-3': {'cortes': 2, 'volumen': 60, 'complejidad_visual': 50, 'densidad_sonora': 2},
@@ -124,3 +126,39 @@ def analizar_video(ruta_video, duracion_intervalo=60):
 
     progreso.empty()
     return generar_informe(resultados_intervalos)
+
+def mostrar_grafico_y_resumen(intervalos):
+    df = pd.DataFrame(intervalos)
+
+    st.markdown("## 📊 Evolución por intervalo")
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    x = [f"{int(i['inicio'])}-{int(i['fin'])}" for i in intervalos]
+
+    ax.plot(x, df['cortes'], label="Cortes/min")
+    ax.plot(x, df['complejidad'], label="Complejidad")
+    ax.plot(x, df['volumen'], label="Volumen (dB)")
+    ax.plot(x, df['densidad_sonora'], label="Densidad sonora")
+
+    ax.axhline(8, color='gray', linestyle='--', linewidth=1, label="Límite edad 7-12")
+
+    ax.set_ylabel("Valor")
+    ax.set_xlabel("Intervalos (segundos)")
+    ax.set_title("Indicadores audiovisuales por intervalo")
+    ax.legend()
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    st.pyplot(fig)
+
+    st.markdown("### 📌 Resumen numérico")
+
+    def resumen_indicador(col, nombre, umbral):
+        max_val = df[col].max()
+        min_val = df[col].min()
+        sobrepasados = (df[col] > umbral).sum()
+        st.markdown(f"- **{nombre}**: máx = `{max_val}`, mín = `{min_val}`, sobrepasan umbral `{umbral}`: **{sobrepasados} intervalos**")
+
+    resumen_indicador("cortes", "Cortes visuales", 8)
+    resumen_indicador("complejidad", "Complejidad visual", 150)
+    resumen_indicador("volumen", "Volumen promedio (dB)", 85)
+    resumen_indicador("densidad_sonora", "Densidad sonora", 6)

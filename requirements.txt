@@ -8,3 +8,5 @@ opencv-python-headless
 requests
 yt_dlp
 pytube
+matplotlib
+pandas
