@@ -84,18 +84,23 @@ def calcular_densidad_sonora(ruta_video):
 
 def clasificar_video(cortes, volumen, complejidad, densidad_sonora):
     razones = []
-    edad = "0-3"
     for rango, params in PARAMETROS_EDAD.items():
-        if (cortes > params['cortes'] or volumen > params['volumen'] or
-            complejidad > params['complejidad_visual'] or densidad_sonora > params['densidad_sonora']):
+        if (cortes <= params['cortes'] and volumen <= params['volumen'] and
+            complejidad <= params['complejidad_visual'] and densidad_sonora <= params['densidad_sonora']):
+            edad = rango
+            break
+        else:
             edad = rango
             razones.clear()
-            if cortes > params['cortes']: razones.append(f"Muchos cortes visuales ({cortes:.1f}/min)")
-            if volumen > params['volumen']: razones.append(f"Volumen alto ({volumen:.1f} dB)")
-            if complejidad > params['complejidad_visual']: razones.append(f"Alta complejidad visual ({complejidad:.1f}/frame)")
-            if densidad_sonora > params['densidad_sonora']: razones.append(f"Densidad sonora alta ({densidad_sonora:.1f}/min)")
-        else:
-            break
+            if cortes > params['cortes']:
+                razones.append(f"Muchos cortes visuales ({cortes:.1f}/min)")
+            if volumen > params['volumen']:
+                razones.append(f"Volumen alto ({volumen:.1f} dB)")
+            if complejidad > params['complejidad_visual']:
+                razones.append(f"Alta complejidad visual ({complejidad:.1f}/frame)")
+            if densidad_sonora > params['densidad_sonora']:
+                razones.append(f"Densidad sonora alta ({densidad_sonora:.1f}/min)")
+
     return edad, razones
 
 def generar_informe(cortes, volumen, complejidad, densidad_sonora, edad, razones):
