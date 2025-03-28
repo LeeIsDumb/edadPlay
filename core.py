@@ -11,7 +11,7 @@ PARAMETROS_EDAD = {
     '13+': {'cortes': float('inf'), 'volumen': 85, 'complejidad_visual': float('inf'), 'densidad_sonora': float('inf')}
 }
 
-def analizar_video(ruta_video, clave_cache=None):
+def analizar_video(ruta_video):
     clip = mp.VideoFileClip(ruta_video)
     cortes = detectar_cortes(clip)
     volumen_promedio = analizar_audio(ruta_video)
