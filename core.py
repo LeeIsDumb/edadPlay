@@ -3,6 +3,7 @@ import librosa
 import numpy as np
 import cv2
 import streamlit as st
+import hashlib
 
 PARAMETROS_EDAD = {
     '0-3': {'cortes': 2, 'volumen': 60, 'complejidad_visual': 50, 'densidad_sonora': 2},
@@ -11,15 +12,34 @@ PARAMETROS_EDAD = {
     '13+': {'cortes': float('inf'), 'volumen': 85, 'complejidad_visual': float('inf'), 'densidad_sonora': float('inf')}
 }
 
+def generar_hash_url(url):
+    url_base = url.split('?')[0]
+    return hashlib.md5(url_base.encode()).hexdigest()
+
 @st.cache_data(show_spinner=False)
-def analizar_video(ruta_video):
+def analizar_video(ruta_video, clave_cache=None):
     clip = mp.VideoFileClip(ruta_video)
+
+    progress_bar = st.progress(0)
+    progress_bar.progress(10, "Detectando cortes visuales...")
     cortes = detectar_cortes(clip)
+
+    progress_bar.progress(40, "Analizando volumen de audio...")
     volumen_promedio = analizar_audio(ruta_video)
+
+    progress_bar.progress(60, "Calculando complejidad visual...")
     complejidad_visual = calcular_complejidad_visual(ruta_video)
+
+    progress_bar.progress(80, "Calculando densidad sonora...")
     densidad_sonora = calcular_densidad_sonora(ruta_video)
+
     edad_recomendada, razones = clasificar_video(cortes, volumen_promedio, complejidad_visual, densidad_sonora)
+
+    progress_bar.progress(100, "Análisis completado")
+    progress_bar.empty()
+
     informe = generar_informe(cortes, volumen_promedio, complejidad_visual, densidad_sonora, edad_recomendada, razones)
+
     return edad_recomendada, informe
 
 def detectar_cortes(clip):

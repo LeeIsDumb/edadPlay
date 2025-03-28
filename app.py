@@ -9,11 +9,12 @@ st.set_page_config(page_title="EdadPlay", page_icon="🎬", layout="wide")
 st.markdown("<h1 style='text-align:center;color:#4B0082;'>🎬 EdadPlay</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align:center;'>Analiza vídeos y obtén una edad recomendada según criterios científicos.</h3>", unsafe_allow_html=True)
 
+if "procesando" not in st.session_state:
+    st.session_state["procesando"] = False
 if "ruta_video" not in st.session_state:
     st.session_state["ruta_video"] = None
 
-# Oculta inputs mientras procesa
-if st.session_state["ruta_video"] is None:
+if not st.session_state["procesando"]:
     video_file = st.file_uploader("🎞️ Sube un vídeo (máx 200 MB)", type=["mp4", "mov", "avi"])
     video_url = st.text_input("🌐 O pega URL de YouTube o Vimeo:")
 
@@ -25,9 +26,12 @@ if st.session_state["ruta_video"] is None:
             with open(ruta_video, "wb") as f:
                 f.write(video_file.getbuffer())
             st.session_state["ruta_video"] = ruta_video
+            st.session_state["clave_cache"] = None
 
     elif video_url:
         ruta_video = "/tmp/video_descargado.mp4"
+        clave_cache = generar_hash_url(video_url)
+        st.session_state["clave_cache"] = clave_cache
         try:
             with st.spinner('Descargando vídeo...'):
                 ydl_opts = {'outtmpl': ruta_video, 'format': 'mp4[height<=480]'}
@@ -37,18 +41,22 @@ if st.session_state["ruta_video"] is None:
             st.success("✅ Vídeo descargado correctamente.")
         except Exception as e:
             st.error(f"⚠️ Error descargando vídeo: {e}")
+            st.session_state["ruta_video"] = None
 
-# Proceso de análisis
-if st.session_state["ruta_video"]:
+if st.session_state["ruta_video"] and not st.session_state["procesando"]:
     if st.button("🔍 Analizar vídeo ahora"):
+        st.session_state["procesando"] = True
         placeholder = st.empty()
         progress_bar = st.progress(0)
-        
-        placeholder.info('Analizando vídeo, por favor espera...')
-        progress_bar.progress(10, "Procesando vídeo (puede tardar unos minutos)...")
-        
-        edad, reporte = analizar_video(st.session_state["ruta_video"])
-        
+
+        placeholder.info('Analizando vídeo...')
+        progress_bar.progress(10, "Detectando cortes visuales...")
+
+        edad, reporte = analizar_video(
+            st.session_state["ruta_video"], 
+            clave_cache=st.session_state.get("clave_cache")
+        )
+
         progress_bar.progress(100, "¡Análisis completado!")
         placeholder.success("✅ ¡Análisis finalizado con éxito!")
         progress_bar.empty()
@@ -59,7 +67,9 @@ if st.session_state["ruta_video"]:
 
         if os.path.exists(st.session_state["ruta_video"]):
             os.remove(st.session_state["ruta_video"])
+
         st.session_state["ruta_video"] = None
+        st.session_state["procesando"] = False
 
         if st.button("🔄 Analizar otro vídeo"):
             st.experimental_rerun()
