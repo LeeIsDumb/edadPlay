@@ -3,6 +3,7 @@ import requests
 import os
 import yt_dlp
 from core import analizar_video
+from core import generar_hash_url
 
 st.set_page_config(page_title="EdadPlay", page_icon="🎬", layout="wide")
 
