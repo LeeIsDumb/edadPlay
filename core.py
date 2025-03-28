@@ -3,7 +3,6 @@ import librosa
 import numpy as np
 import cv2
 import streamlit as st
-import hashlib
 
 PARAMETROS_EDAD = {
     '0-3': {'cortes': 2, 'volumen': 60, 'complejidad_visual': 50, 'densidad_sonora': 2},
@@ -12,11 +11,6 @@ PARAMETROS_EDAD = {
     '13+': {'cortes': float('inf'), 'volumen': 85, 'complejidad_visual': float('inf'), 'densidad_sonora': float('inf')}
 }
 
-def generar_hash_url(url):
-    url_base = url.split('?')[0]
-    return hashlib.md5(url_base.encode()).hexdigest()
-
-@st.cache_data(show_spinner=False)
 def analizar_video(ruta_video, clave_cache=None):
     clip = mp.VideoFileClip(ruta_video)
     cortes = detectar_cortes(clip)
