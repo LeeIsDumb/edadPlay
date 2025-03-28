@@ -103,12 +103,12 @@ if st.session_state["procesando"]:
     placeholder.info('Analizando vídeo, por favor espera...')
 
     edad, reporte, intervalos = analizar_video(st.session_state["ruta_video"])
-    mostrar_grafico_y_resumen(intervalos)
 
     placeholder.success("✅ ¡Análisis finalizado con éxito!")
 
     st.markdown(f"<h2 style='color:#8B008B;'>Edad recomendada: {edad}</h2>", unsafe_allow_html=True)
     st.markdown("### 📝 Informe detallado:")
+    mostrar_grafico_y_resumen(intervalos)
     st.info(reporte)
 
     if os.path.exists(st.session_state["ruta_video"]):

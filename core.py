@@ -78,15 +78,6 @@ def generar_informe(analisis_intervalos):
     edad_recomendada = max(conteo_edades, key=conteo_edades.get)
 
     informe = f"Edad recomendada general: {edad_recomendada}\n\n"
-    informe += "### Detalles por intervalos analizados:\n"
-
-    for i in analisis_intervalos:
-        informe += (f"- Intervalo {int(i['inicio'])}-{int(i['fin'])} seg → "
-                    f"Edad: {i['edad']} | "
-                    f"Cortes visuales: {i['cortes']}/min, "
-                    f"Complejidad visual: {i['complejidad']} objetos/frame, "
-                    f"Volumen promedio: {i['volumen']} dB, "
-                    f"Densidad sonora: {i['densidad_sonora']} sonidos/min\n")
 
     return edad_recomendada, informe, analisis_intervalos
 
