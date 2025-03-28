@@ -1,9 +1,9 @@
 import moviepy.editor as mp
-import librosa
 import numpy as np
+import librosa
 import cv2
-import streamlit as st
 import tempfile
+import streamlit as st
 
 PARAMETROS_EDAD = {
     '0-3': {'cortes': 2, 'volumen': 60, 'complejidad_visual': 50, 'densidad_sonora': 2},
@@ -12,151 +12,109 @@ PARAMETROS_EDAD = {
     '13+': {'cortes': float('inf'), 'volumen': 85, 'complejidad_visual': float('inf'), 'densidad_sonora': float('inf')}
 }
 
-def analizar_video(ruta_video):
-    clip = mp.VideoFileClip(ruta_video)
-
-    progress_bar = st.progress(0)
-    progress_bar.progress(10, "Detectando cortes visuales...")
-    cortes = detectar_cortes(clip)
-
-    progress_bar.progress(40, "Analizando volumen de audio...")
-    volumen_promedio = analizar_audio(ruta_video)
-
-    progress_bar.progress(60, "Calculando complejidad visual...")
-    complejidad_visual = calcular_complejidad_visual(ruta_video)
-
-    progress_bar.progress(80, "Calculando densidad sonora...")
-    densidad_sonora = calcular_densidad_sonora(ruta_video)
-
-    edad_recomendada, razones = clasificar_video(cortes, volumen_promedio, complejidad_visual, densidad_sonora)
-
-    progress_bar.progress(100, "Análisis completado")
-    progress_bar.empty()
-
-    informe = generar_informe(cortes, volumen_promedio, complejidad_visual, densidad_sonora, edad_recomendada, razones)
-
-    return edad_recomendada, informe
-
 def detectar_cortes(clip, intervalo=1.0, umbral=0.6):
     cambios = 0
     anterior_hist = None
-    total_checks = 0
     for t in np.arange(0, clip.duration, intervalo):
-        frame = clip.get_frame(t)
-        frame = cv2.resize(frame, (320, 180))
+        frame = cv2.resize(clip.get_frame(t), (320, 180))
         hist = cv2.calcHist([frame], [0, 1, 2], None, [8,8,8], [0,256]*3)
         hist = cv2.normalize(hist, hist).flatten()
-
         if anterior_hist is not None:
             diferencia = cv2.compareHist(anterior_hist, hist, cv2.HISTCMP_CORREL)
             if diferencia < umbral:
                 cambios += 1
         anterior_hist = hist
-        total_checks += 1
+    return round(cambios / (clip.duration / 60), 2)
 
-    cortes_por_minuto = cambios / (clip.duration / 60)
-    return round(cortes_por_minuto, 2)
-
-# Optimizado: Análisis de audio usando memoria y cálculo en tiempo real
-def analizar_audio(ruta_video):
+def analizar_audio(clip):
     with tempfile.NamedTemporaryFile(suffix=".wav") as audio_temp:
-        clip = mp.VideoFileClip(ruta_video)
         clip.audio.write_audiofile(audio_temp.name, verbose=False, logger=None)
-        y, _ = librosa.load(audio_temp.name, sr=None)
+        y, _ = librosa.load(audio_temp.name, sr=22050)
         rms = librosa.feature.rms(y=y)[0]
         volumen_db = librosa.amplitude_to_db(rms, ref=np.max)
-        return float(np.mean(np.abs(volumen_db)))
+        return round(float(np.mean(np.abs(volumen_db))), 2)
 
-# Optimizado: Complejidad visual promedio (análisis eficiente usando sampling de frames)
-def calcular_complejidad_visual(ruta_video, sample_frames=30):
-    cap = cv2.VideoCapture(ruta_video)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    step = max(1, total_frames // sample_frames)
+def calcular_complejidad_visual(clip, sample_frames=30):
     complejidades = []
-
-    for i in range(0, total_frames, step):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, i)
-        ret, frame = cap.read()
-        if not ret:
-            continue
-        frame = cv2.resize(frame, (320, 180))
+    for t in np.linspace(0, clip.duration, sample_frames):
+        frame = cv2.resize(clip.get_frame(t), (320, 180))
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         edges = cv2.Canny(blurred, 100, 200)
         contornos, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         complejidades.append(len(contornos))
+    return round(float(np.mean(complejidades)), 2)
 
-    cap.release()
-    complejidad_media = np.mean(complejidades) if complejidades else 0
-    return round(complejidad_media, 2)
-
-# Optimizado: Densidad sonora usando detección eficiente de onsets (librosa optimizado)
-def calcular_densidad_sonora(ruta_video):
+def calcular_densidad_sonora(clip):
     with tempfile.NamedTemporaryFile(suffix=".wav") as audio_temp:
-        clip = mp.VideoFileClip(ruta_video)
         clip.audio.write_audiofile(audio_temp.name, verbose=False, logger=None)
-        
         y, sr = librosa.load(audio_temp.name, sr=22050)
-
         onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-        picos = librosa.onset.onset_detect(
-            onset_envelope=onset_env,
-            sr=sr,
-            units='time',
-            backtrack=True,
-            delta=0.7,
-            wait=2
-        )
-
+        picos = librosa.onset.onset_detect(onset_envelope=onset_env, sr=sr, units='time', backtrack=True, delta=0.7, wait=2)
         sonidos_filtrados = []
         ultimo_sonido = -np.inf
         intervalo_minimo = 1.0
-
         for pico in picos:
             if pico - ultimo_sonido >= intervalo_minimo:
                 sonidos_filtrados.append(pico)
                 ultimo_sonido = pico
-
         duracion_min = clip.duration / 60
-        densidad = len(sonidos_filtrados) / duracion_min
+        return round(len(sonidos_filtrados) / duracion_min, 2)
 
-        return round(densidad, 2)
-
-def clasificar_video(cortes, volumen, complejidad, densidad_sonora):
-    razones = []
+def clasificar_intervalo(cortes, volumen, complejidad, densidad_sonora):
     for rango, params in PARAMETROS_EDAD.items():
         if (cortes <= params['cortes'] and volumen <= params['volumen'] and
             complejidad <= params['complejidad_visual'] and densidad_sonora <= params['densidad_sonora']):
-            edad = rango
-            break
-        else:
-            edad = rango
-            razones.clear()
-            if cortes > params['cortes']:
-                razones.append(f"Muchos cortes visuales ({cortes:.1f}/min)")
-            if volumen > params['volumen']:
-                razones.append(f"Volumen alto ({volumen:.1f} dB)")
-            if complejidad > params['complejidad_visual']:
-                razones.append(f"Alta complejidad visual ({complejidad:.1f}/frame)")
-            if densidad_sonora > params['densidad_sonora']:
-                razones.append(f"Densidad sonora alta ({densidad_sonora:.1f}/min)")
+            return rango
+    return "13+"
 
-    return edad, razones
+def generar_informe(analisis_intervalos):
+    conteo_edades = {"0-3":0, "4-6":0, "7-12":0, "13+":0}
+    for intervalo in analisis_intervalos:
+        conteo_edades[intervalo['edad']] += 1
+    edad_recomendada = max(conteo_edades, key=conteo_edades.get)
+    informe = f"Edad recomendada general: {edad_recomendada}\n\n"
+    informe += "**Detalles por intervalos problemáticos:**\n"
+    for i in analisis_intervalos:
+        if i['edad'] != edad_recomendada:
+            informe += (f"- Intervalo {int(i['inicio'])}-{int(i['fin'])} seg. → edad {i['edad']} | "
+                        f"Cortes: {i['cortes']}/min, Volumen: {i['volumen']}dB, "
+                        f"Complejidad: {i['complejidad']}, Densidad sonora: {i['densidad_sonora']}/min\n")
+    return edad_recomendada, informe
 
-def generar_informe(cortes, volumen, complejidad, densidad_sonora, edad, razones):
-    informe = f"Edad recomendada: {edad}\n\n"
-    informe += f"📌 **Detalles del análisis:**\n"
-    informe += f"- Cortes visuales: {cortes:.2f}/min\n"
-    informe += f"- Complejidad visual: {complejidad:.2f} objetos/frame\n"
-    informe += f"- Volumen promedio: {volumen:.2f} dB\n"
-    informe += f"- Densidad sonora: {densidad_sonora:.2f} sonidos/min\n\n"
-    
-    informe += "**Razones de la clasificación:**\n"
-    if razones:
-        for razon in razones:
-            informe += f"- {razon}\n"
-    else:
-        informe += "Adecuado para todas las edades.\n"
+def analizar_video(ruta_video, duracion_intervalo=60):
+    clip = mp.VideoFileClip(ruta_video)
+    resultados_intervalos = []
+    intervalos = np.arange(0, clip.duration, duracion_intervalo)
+    total = len(intervalos)
+    progreso = st.progress(0)
 
-    return informe
+    for idx, inicio in enumerate(intervalos):
+        fin = min(inicio + duracion_intervalo, clip.duration)
+        subclip = clip.subclip(inicio, fin)
 
+        progreso.progress(10, "Detectando cortes visuales...")
+        cortes = detectar_cortes(subclip)
+        progreso.progress(40, "Analizando volumen de audio...")
+        volumen = analizar_audio(subclip)
+        progreso.progress(60, "Calculando complejidad visual...")
+        complejidad = calcular_complejidad_visual(subclip)
+        progreso.progress(80, "Calculando densidad sonora...")
+        densidad = calcular_densidad_sonora(subclip)
+
+        edad = clasificar_intervalo(cortes, volumen, complejidad, densidad)
+
+        resultados_intervalos.append({
+            'inicio': inicio,
+            'fin': fin,
+            'cortes': cortes,
+            'volumen': volumen,
+            'complejidad': complejidad,
+            'densidad_sonora': densidad,
+            'edad': edad
+        })
+
+        progreso.progress((idx + 1) / total, f"Analizando intervalos ({idx+1}/{total})...")
+
+    progreso.empty()
+    return generar_informe(resultados_intervalos)

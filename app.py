@@ -83,62 +83,85 @@ st.table({
 })
 
 st.markdown("---")
-st.markdown("## 📖 **¿Qué significan estos conceptos?**")
+st.markdown("## 🛠️ **¿Cómo calculamos los indicadores del vídeo?**")
 st.markdown("""
-- **📌 Cortes visuales:** Número de cambios de plano o escena por minuto. Un ritmo lento facilita el procesamiento visual, especialmente en niños pequeños. Un ritmo alto puede causar sobreestimulación visual.
-- **🎨 Complejidad visual:** Cantidad de elementos o detalles visuales presentes simultáneamente en una escena. Cuantos más elementos, mayor esfuerzo cognitivo para interpretarlos. Para niños pequeños se recomiendan escenas visualmente simples.
-- **🔊 Volumen promedio (dB):** Nivel medio del volumen del audio. Un volumen alto puede causar estrés auditivo y afectar negativamente el desarrollo auditivo infantil. Se recomienda mantener niveles moderados a bajos según la edad.
-- **🎵 Densidad sonora:** Frecuencia con la que se presentan sonidos nuevos o diferentes en un minuto (por ejemplo, efectos de sonido, notas musicales diferentes, cambios de voz, etc.). Una densidad sonora alta puede sobrecargar auditivamente al niño, mientras que una baja densidad ayuda a mantener la atención y el procesamiento auditivo saludable.
+**EdadPlay** utiliza técnicas avanzadas y criterios científicos para analizar vídeos infantiles y determinar claramente la edad mínima recomendada. Estos son los métodos específicos para cada indicador:
+
+### 📌 **1. Cortes visuales (por minuto)**
+
+Contamos cada cambio notable de escena o plano visual:
+
+- Se analiza el vídeo en intervalos cortos (cada segundo).
+- Para cada intervalo, se compara el histograma de color del fotograma actual con el anterior usando técnicas robustas de comparación estadística (histogramas normalizados).
+- Si la diferencia supera un umbral establecido (0.6), se considera un "corte visual".
+- Finalmente, calculamos cuántos de estos cambios suceden por minuto.
+
+### 🎨 **2. Complejidad visual (objetos por escena)**
+
+Medimos el número promedio de elementos visuales (objetos o contornos diferenciados) presentes en cada fotograma analizado:
+
+- Seleccionamos una muestra representativa de fotogramas (aproximadamente 30 por vídeo).
+- Cada fotograma es procesado en escala de grises, reduciendo ruido con suavizado Gaussiano y detectando contornos mediante algoritmos (Canny).
+- El número promedio de estos contornos en toda la muestra representa claramente la "complejidad visual" del vídeo.
+
+### 🔊 **3. Volumen promedio (dB)**
+
+Medimos el nivel de volumen medio del audio del vídeo:
+
+- Extraemos el audio del vídeo en formato WAV.
+- Calculamos la intensidad sonora usando técnicas profesionales (RMS - Valor Cuadrático Medio).
+- Transformamos esos valores de intensidad en decibelios (dB).
+- Finalmente, calculamos el promedio absoluto del volumen en dB de todo el audio.
+
+### 🎵 **4. Densidad sonora (sonidos nuevos por minuto)**
+
+Evaluamos cuántos sonidos distintos ocurren cada minuto del vídeo, identificando nuevos eventos auditivos claramente diferenciados:
+
+- Extraemos el audio y analizamos cambios notables en la señal sonora usando algoritmos especializados (detección robusta de "onsets" de audio).
+- Usamos filtros adicionales para asegurar que solo contamos sonidos realmente diferenciados (al menos 1 segundo entre sonidos para evitar contar múltiples golpes o efectos similares cercanos).
+- Calculamos cuántos de estos sonidos aparecen por cada minuto del vídeo, obteniendo la "densidad sonora".
+
+Estos métodos permiten a **EdadPlay** proporcionar recomendaciones claras y basadas en criterios científicos sólidos sobre qué contenido audiovisual es adecuado según la etapa del desarrollo infantil.
 """)
 
-# Información científica
-st.markdown("---")
-st.markdown("## 📖 Resumen de estudios científicos")
-st.info("""
-🔸 **Conclusiones científicas clave:**
-- Exposición temprana a vídeos rápidos y estimulantes puede afectar negativamente el desarrollo cerebral infantil.
-- Expertos recomiendan límites claros según edad, priorizando contenidos lentos, educativos y supervisados.
+st.markdown("""
+### 📚 Estudios científicos detallados:
+**1\. Organización Mundial de la Salud (OMS, 2019):**
+- **Conclusión principal:** Limitar el uso de pantallas en niños menores de 5 años. Nada antes del año, máximo 1 hora diaria de contenido supervisado entre 2 y 4 años.
+- **Razón científica:** Mayor tiempo de pantallas tempranas se vincula directamente con retrasos en el desarrollo motor, cognitivo y lingüístico.
+
+**2\. Academia Americana de Pediatría (AAP, 2020):**
+- **Conclusión principal:** Evitar pantallas en niños menores de 18 meses excepto videollamadas familiares. Entre 2–5 años, máximo 1 hora diaria de contenido educativo.
+- **Razón científica:** Vídeos rápidos y con muchos estímulos visuales o sonoros generan sobreestimulación, perjudicando atención, memoria y autorregulación emocional.
+
+**3\. Estudio de Dimitri Christakis (2011, Pediatrics):**
+- **Conclusión principal:** Exposición frecuente a vídeos rápidos en menores de 3 años aumenta significativamente el riesgo de problemas atencionales posteriores.
+- **Razón científica:** El ritmo acelerado de estímulos audiovisuales sobrecarga los circuitos neuronales en desarrollo, afectando negativamente la atención sostenida a largo plazo.
+
+**4\. UNICEF (2021):**
+- **Conclusión principal:** Los niños necesitan principalmente interacciones reales y contenido pausado si utilizan pantallas.
+- **Razón científica:** La exposición excesiva a estímulos rápidos afecta la capacidad de aprendizaje, generando ansiedad y comportamientos impulsivos en menores.
+
+**5\. Canadian Paediatric Society (CPS, 2019):**
+- **Conclusión principal:** Menores de 5 años no deben superar 1 hora diaria de contenido audiovisual lento y educativo, siempre supervisado por adultos.
+- **Razón científica:** Contenido audiovisual de alta intensidad está claramente vinculado a dificultades académicas, irritabilidad e impulsividad en edades posteriores.
+
+**6\. Estudios sobre estrés y cortisol en niños expuestos a vídeos violentos (Gentile et al., 2017):**
+- **Conclusión principal:** Los niños expuestos a contenidos violentos o altamente estimulantes presentan niveles elevados de cortisol, generando estrés crónico y comportamientos agresivos.
+- **Razón científica:** Altos niveles de cortisol prolongado están relacionados con trastornos emocionales y problemas de conducta, especialmente en menores de 12 años.
+
+**7\. Sobre el riesgo de adicción digital (OMS, 2018 - reconocimiento trastorno por videojuegos):**
+- **Conclusión principal:** Adolescentes expuestos constantemente a estímulos audiovisuales rápidos (videojuegos, redes sociales) tienen un riesgo aumentado de desarrollar adicción digital.
+- **Razón científica:** La dopamina generada por contenidos rápidos e intensos puede producir dependencia psicológica y efectos similares a otras adicciones.
 """)
 
-if st.checkbox("🔍 Ver detalles científicos ampliados"):
-    st.markdown("""
-    ### 📚 Estudios científicos detallados:
-    **1\. Organización Mundial de la Salud (OMS, 2019):**
-    - **Conclusión principal:** Limitar el uso de pantallas en niños menores de 5 años. Nada antes del año, máximo 1 hora diaria de contenido supervisado entre 2 y 4 años.
-    - **Razón científica:** Mayor tiempo de pantallas tempranas se vincula directamente con retrasos en el desarrollo motor, cognitivo y lingüístico.
-
-    **2\. Academia Americana de Pediatría (AAP, 2020):**
-    - **Conclusión principal:** Evitar pantallas en niños menores de 18 meses excepto videollamadas familiares. Entre 2–5 años, máximo 1 hora diaria de contenido educativo.
-    - **Razón científica:** Vídeos rápidos y con muchos estímulos visuales o sonoros generan sobreestimulación, perjudicando atención, memoria y autorregulación emocional.
-
-    **3\. Estudio de Dimitri Christakis (2011, Pediatrics):**
-    - **Conclusión principal:** Exposición frecuente a vídeos rápidos en menores de 3 años aumenta significativamente el riesgo de problemas atencionales posteriores.
-    - **Razón científica:** El ritmo acelerado de estímulos audiovisuales sobrecarga los circuitos neuronales en desarrollo, afectando negativamente la atención sostenida a largo plazo.
-
-    **4\. UNICEF (2021):**
-    - **Conclusión principal:** Los niños necesitan principalmente interacciones reales y contenido pausado si utilizan pantallas.
-    - **Razón científica:** La exposición excesiva a estímulos rápidos afecta la capacidad de aprendizaje, generando ansiedad y comportamientos impulsivos en menores.
-
-    **5\. Canadian Paediatric Society (CPS, 2019):**
-    - **Conclusión principal:** Menores de 5 años no deben superar 1 hora diaria de contenido audiovisual lento y educativo, siempre supervisado por adultos.
-    - **Razón científica:** Contenido audiovisual de alta intensidad está claramente vinculado a dificultades académicas, irritabilidad e impulsividad en edades posteriores.
-
-    **6\. Estudios sobre estrés y cortisol en niños expuestos a vídeos violentos (Gentile et al., 2017):**
-    - **Conclusión principal:** Los niños expuestos a contenidos violentos o altamente estimulantes presentan niveles elevados de cortisol, generando estrés crónico y comportamientos agresivos.
-    - **Razón científica:** Altos niveles de cortisol prolongado están relacionados con trastornos emocionales y problemas de conducta, especialmente en menores de 12 años.
-
-    **7\. Sobre el riesgo de adicción digital (OMS, 2018 - reconocimiento trastorno por videojuegos):**
-    - **Conclusión principal:** Adolescentes expuestos constantemente a estímulos audiovisuales rápidos (videojuegos, redes sociales) tienen un riesgo aumentado de desarrollar adicción digital.
-    - **Razón científica:** La dopamina generada por contenidos rápidos e intensos puede producir dependencia psicológica y efectos similares a otras adicciones.
-    """)
-
-    st.markdown("""
-    #### 🔖 Referencias bibliográficas completas:
-    - **OMS (2019):** Guidelines on Physical Activity, Sedentary Behaviour and Sleep for Children under 5 Years of Age. [Ver estudio](https://apps.who.int/iris/handle/10665/311664)
-    - **AAP (2020):** Media and Young Minds. Pediatrics, Official AAP Guidelines. [Ver estudio](https://publications.aap.org/pediatrics/article/138/5/e20162591/60321/Media-and-Young-Minds)
-    - **Christakis DA (2011):** The effects of fast-paced cartoons. Pediatrics, Volume 128. [Ver estudio](https://doi.org/10.1542/peds.2011-2071)
-    - **UNICEF (2021):** Children in a digital world. [Ver estudio](https://www.unicef.org/reports/state-worlds-children-2017)
-    - **Canadian Paediatric Society (2019):** Screen time and young children: Promoting health and development in a digital world. [Ver estudio](https://cps.ca/en/documents/position/screen-time-and-young-children)
-    - **Gentile et al. (2017):** The effects of violent video game habits. JAMA Pediatrics. [Ver estudio](https://jamanetwork.com/journals/jamapediatrics/fullarticle/2612159)
-    - **OMS (2018):** International Classification of Diseases (ICD-11), Gaming disorder. [Ver estudio](https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder)
-    """)
+st.markdown("""
+#### 🔖 Referencias bibliográficas completas:
+- **OMS (2019):** Guidelines on Physical Activity, Sedentary Behaviour and Sleep for Children under 5 Years of Age. [Ver estudio](https://apps.who.int/iris/handle/10665/311664)
+- **AAP (2020):** Media and Young Minds. Pediatrics, Official AAP Guidelines. [Ver estudio](https://publications.aap.org/pediatrics/article/138/5/e20162591/60321/Media-and-Young-Minds)
+- **Christakis DA (2011):** The effects of fast-paced cartoons. Pediatrics, Volume 128. [Ver estudio](https://doi.org/10.1542/peds.2011-2071)
+- **UNICEF (2021):** Children in a digital world. [Ver estudio](https://www.unicef.org/reports/state-worlds-children-2017)
+- **Canadian Paediatric Society (2019):** Screen time and young children: Promoting health and development in a digital world. [Ver estudio](https://cps.ca/en/documents/position/screen-time-and-young-children)
+- **Gentile et al. (2017):** The effects of violent video game habits. JAMA Pediatrics. [Ver estudio](https://jamanetwork.com/journals/jamapediatrics/fullarticle/2612159)
+- **OMS (2018):** International Classification of Diseases (ICD-11), Gaming disorder. [Ver estudio](https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder)
+""")
