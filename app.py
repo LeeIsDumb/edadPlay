@@ -82,6 +82,15 @@ st.table({
     "Tiempo pantalla/día": ["Evitar", "Máx 1 hora", "1-2 horas", "Equilibrado"]
 })
 
+st.markdown("---")
+st.markdown("## 📖 **¿Qué significan estos conceptos?**")
+st.markdown("""
+- **📌 Cortes visuales:** Número de cambios de plano o escena por minuto. Un ritmo lento facilita el procesamiento visual, especialmente en niños pequeños. Un ritmo alto puede causar sobreestimulación visual.
+- **🎨 Complejidad visual:** Cantidad de elementos o detalles visuales presentes simultáneamente en una escena. Cuantos más elementos, mayor esfuerzo cognitivo para interpretarlos. Para niños pequeños se recomiendan escenas visualmente simples.
+- **🔊 Volumen promedio (dB):** Nivel medio del volumen del audio. Un volumen alto puede causar estrés auditivo y afectar negativamente el desarrollo auditivo infantil. Se recomienda mantener niveles moderados a bajos según la edad.
+- **🎵 Densidad sonora:** Frecuencia con la que se presentan sonidos nuevos o diferentes en un minuto (por ejemplo, efectos de sonido, notas musicales diferentes, cambios de voz, etc.). Una densidad sonora alta puede sobrecargar auditivamente al niño, mientras que una baja densidad ayuda a mantener la atención y el procesamiento auditivo saludable.
+""")
+
 # Información científica
 st.markdown("---")
 st.markdown("## 📖 Resumen de estudios científicos")

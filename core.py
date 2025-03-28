@@ -95,15 +95,31 @@ def calcular_densidad_sonora(ruta_video):
     with tempfile.NamedTemporaryFile(suffix=".wav") as audio_temp:
         clip = mp.VideoFileClip(ruta_video)
         clip.audio.write_audiofile(audio_temp.name, verbose=False, logger=None)
-        y, sr = librosa.load(audio_temp.name, sr=None)
+        
+        y, sr = librosa.load(audio_temp.name, sr=22050)
 
         onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-        picos = librosa.util.peak_pick(
-            onset_env, pre_max=15, post_max=15, pre_avg=15, post_avg=15, delta=2.0, wait=20
+        picos = librosa.onset.onset_detect(
+            onset_envelope=onset_env,
+            sr=sr,
+            units='time',
+            backtrack=True,
+            delta=0.7,
+            wait=2
         )
 
+        sonidos_filtrados = []
+        ultimo_sonido = -np.inf
+        intervalo_minimo = 1.0
+
+        for pico in picos:
+            if pico - ultimo_sonido >= intervalo_minimo:
+                sonidos_filtrados.append(pico)
+                ultimo_sonido = pico
+
         duracion_min = clip.duration / 60
-        densidad = len(picos) / duracion_min
+        densidad = len(sonidos_filtrados) / duracion_min
+
         return round(densidad, 2)
 
 def clasificar_video(cortes, volumen, complejidad, densidad_sonora):
@@ -131,8 +147,8 @@ def generar_informe(cortes, volumen, complejidad, densidad_sonora, edad, razones
     informe = f"Edad recomendada: {edad}\n\n"
     informe += f"📌 **Detalles del análisis:**\n"
     informe += f"- Cortes visuales: {cortes:.2f}/min\n"
-    informe += f"- Volumen promedio: {volumen:.2f} dB\n"
     informe += f"- Complejidad visual: {complejidad:.2f} objetos/frame\n"
+    informe += f"- Volumen promedio: {volumen:.2f} dB\n"
     informe += f"- Densidad sonora: {densidad_sonora:.2f} sonidos/min\n\n"
     
     informe += "**Razones de la clasificación:**\n"
