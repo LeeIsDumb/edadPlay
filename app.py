@@ -50,13 +50,11 @@ if st.session_state["ruta_video"] and not st.session_state["procesando"]:
 # Proceso de análisis con barra de progreso detallada
 if st.session_state["procesando"]:
     placeholder = st.empty()
-    progress_bar = st.progress(0)
     placeholder.info('Analizando vídeo, por favor espera...')
 
     edad, reporte = analizar_video(st.session_state["ruta_video"])
 
     placeholder.success("✅ ¡Análisis finalizado con éxito!")
-    progress_bar.empty()
 
     st.markdown(f"<h2 style='color:#8B008B;'>Edad recomendada: {edad}</h2>", unsafe_allow_html=True)
     st.markdown("### 📝 Informe detallado:")

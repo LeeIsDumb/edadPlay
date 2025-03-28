@@ -98,7 +98,9 @@ def calcular_densidad_sonora(ruta_video):
         y, sr = librosa.load(audio_temp.name, sr=None)
 
         onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-        picos = librosa.util.peak_pick(onset_env, pre_max=10, post_max=10, pre_avg=10, post_avg=10, delta=1.0, wait=10)
+        picos = librosa.util.peak_pick(
+            onset_env, pre_max=15, post_max=15, pre_avg=15, post_avg=15, delta=2.0, wait=20
+        )
 
         duracion_min = clip.duration / 60
         densidad = len(picos) / duracion_min
@@ -126,6 +128,19 @@ def clasificar_video(cortes, volumen, complejidad, densidad_sonora):
     return edad, razones
 
 def generar_informe(cortes, volumen, complejidad, densidad_sonora, edad, razones):
-    informe = f"Edad recomendada: {edad}\n"
-    informe += "\nRazones:\n" + ("\n".join(razones) if razones else "Adecuado para todas las edades.")
+    informe = f"Edad recomendada: {edad}\n\n"
+    informe += f"📌 **Detalles del análisis:**\n"
+    informe += f"- Cortes visuales: {cortes:.2f}/min\n"
+    informe += f"- Volumen promedio: {volumen:.2f} dB\n"
+    informe += f"- Complejidad visual: {complejidad:.2f} objetos/frame\n"
+    informe += f"- Densidad sonora: {densidad_sonora:.2f} sonidos/min\n\n"
+    
+    informe += "**Razones de la clasificación:**\n"
+    if razones:
+        for razon in razones:
+            informe += f"- {razon}\n"
+    else:
+        informe += "Adecuado para todas las edades.\n"
+
     return informe
+
