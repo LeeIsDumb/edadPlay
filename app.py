@@ -108,9 +108,6 @@ if st.session_state["procesando"]:
             <div style="background-color:#6a4c93; color:white; padding:1em; border-radius:10px; text-align:center;">
                 <h3>📌 Edad recomendada: {edad}</h3>
             </div>
-            <div style='margin-top: 1em;'>
-                {reporte}
-            </div>
         """, unsafe_allow_html=True)
         mostrar_resumen(intervalos)
 
