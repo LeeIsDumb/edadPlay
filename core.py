@@ -211,28 +211,31 @@ def mostrar_grafico(intervalos):
 
 def mostrar_resumen(intervalos):
     df = pd.DataFrame(intervalos)
-    st.markdown("### 📌 Resumen visual de métricas")
-    col_v1, col_v2 = st.columns(2)
-    with col_v1:
-        st.metric("Cortes visuales/min (máx)", f"{df['cortes'].max()}")
-        st.metric("Complejidad visual (máx)", f"{df['complejidad'].max()}")
-    with col_v2:
-        st.metric("Volumen promedio (dB)", f"{df['volumen'].max()}")
-        st.metric("Densidad sonora (máx)", f"{df['densidad_sonora'].max()}")
-    style_metric_cards()
-    st.markdown("""
-        <style>
-        [data-testid="metric-container"] {
-            background-color: #f5f5f5 !important; /* más gris, mejor contraste */
-            color: #000000 !important;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 5px 0;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        [data-testid="metric-container"] * {
-            color: #000000 !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
 
+    st.markdown("### 📌 Resumen visual de métricas")
+
+    metricas = [
+        ("Cortes visuales/min (máx)", df['cortes'].max(), "#20D86A"),
+        ("Complejidad visual (máx)", df['complejidad'].max(), "#6a4c93"),
+        ("Volumen promedio (dB)", df['volumen'].max(), "#f39c12"),
+        ("Densidad sonora (máx)", df['densidad_sonora'].max(), "#e74c3c")
+    ]
+
+    col1, col2 = st.columns(2)
+    for i, (titulo, valor, color) in enumerate(metricas):
+        target_col = col1 if i % 2 == 0 else col2
+        with target_col:
+            st.markdown(f"""
+                <div style="
+                    background-color: {color};
+                    padding: 20px;
+                    border-radius: 15px;
+                    color: white;
+                    margin-bottom: 15px;
+                    text-align: center;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                ">
+                    <div style="font-size: 0.9em;">{titulo}</div>
+                    <div style="font-size: 2em; font-weight: bold;">{valor}</div>
+                </div>
+            """, unsafe_allow_html=True)
