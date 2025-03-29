@@ -112,7 +112,7 @@ if st.session_state["procesando"]:
                 {reporte}
             </div>
         """, unsafe_allow_html=True)
-        mostrar_resumen(edad)
+        mostrar_resumen(intervalos)
 
     if os.path.exists(st.session_state["ruta_video"]):
         os.remove(st.session_state["ruta_video"])
