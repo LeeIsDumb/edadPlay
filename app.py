@@ -29,6 +29,7 @@ st.markdown("""
 
     .stButton button:hover {
         background-color: #00953C;
+        color: white;
     }
 
     @media screen and (max-width: 768px) {
@@ -96,12 +97,21 @@ if st.session_state["procesando"]:
     edad, reporte, intervalos = analizar_video(st.session_state["ruta_video"])
     st.success("✅ ¡Análisis finalizado!")
 
+    st.markdown("<h2 style='text-align:center; color:#6a4c93;'>📊 Resultado del análisis</h2>", unsafe_allow_html=True)
     col1, col2 = st.columns([2, 1])
+
     with col1:
         mostrar_grafico_y_resumen(intervalos)
+
     with col2:
-        st.markdown(f"<h3 style='color:#6a4c93;'>📌 Edad recomendada: {edad}</h3>", unsafe_allow_html=True)
-        st.info(reporte)
+        st.markdown(f"""
+            <div style="background-color:#6a4c93; color:white; padding:1em; border-radius:10px; text-align:center;">
+                <h3>📌 Edad recomendada: {edad}</h3>
+            </div>
+            <div style='margin-top: 1em;'>
+                {reporte}
+            </div>
+        """, unsafe_allow_html=True)
 
     if os.path.exists(st.session_state["ruta_video"]):
         os.remove(st.session_state["ruta_video"])

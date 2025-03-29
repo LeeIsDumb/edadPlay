@@ -195,7 +195,6 @@ def analizar_video(ruta_video, duracion_intervalo=60):
 
 def mostrar_grafico_y_resumen(intervalos):
     df = pd.DataFrame(intervalos)
-    st.markdown("## 📊 Indicadores por intervalo")
 
     col1, col2 = st.columns([2, 1])
     with col1:
@@ -225,4 +224,20 @@ def mostrar_grafico_y_resumen(intervalos):
             st.metric("Volumen promedio (dB)", f"{df['volumen'].max()}", help="Nivel de intensidad sonora en decibelios")
             st.metric("Densidad sonora (máx)", f"{df['densidad_sonora'].max()}", help="Cantidad de sonidos diferenciados por minuto")
         style_metric_cards()
+        st.markdown("""
+            <style>
+            [data-testid="metric-container"] {
+                background-color: #f0f0f0;
+                color: #000 !important;
+                border-radius: 12px;
+                padding: 15px;
+                margin: 5px 0;
+                box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            }
+            [data-testid="metric-container"] > div {
+                color: #000 !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
 
