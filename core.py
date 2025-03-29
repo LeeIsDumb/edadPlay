@@ -223,15 +223,15 @@ def mostrar_resumen(intervalos):
     st.markdown("""
         <style>
         [data-testid="metric-container"] {
-            background-color: #f0f0f0;
-            color: #000 !important;
+            background-color: #f5f5f5 !important; /* más gris, mejor contraste */
+            color: #000000 !important;
             border-radius: 12px;
             padding: 15px;
             margin: 5px 0;
             box-shadow: 0 0 5px rgba(0,0,0,0.1);
         }
-        [data-testid="metric-container"] > div {
-            color: #000 !important;
+        [data-testid="metric-container"] * {
+            color: #000000 !important;
         }
         </style>
     """, unsafe_allow_html=True)
