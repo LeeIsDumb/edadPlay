@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import yt_dlp
-from core import analizar_video, mostrar_grafico_y_resumen
+from core import analizar_video, mostrar_grafico, mostrar_resumen
 
 st.set_page_config(page_title="EdadPlay", page_icon="🎬", layout="wide")
 
@@ -101,7 +101,7 @@ if st.session_state["procesando"]:
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        mostrar_grafico_y_resumen(intervalos)
+        mostrar_grafico(intervalos)
 
     with col2:
         st.markdown(f"""
@@ -112,6 +112,7 @@ if st.session_state["procesando"]:
                 {reporte}
             </div>
         """, unsafe_allow_html=True)
+        mostrar_resumen(edad)
 
     if os.path.exists(st.session_state["ruta_video"]):
         os.remove(st.session_state["ruta_video"])

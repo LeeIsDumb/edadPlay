@@ -193,51 +193,46 @@ def analizar_video(ruta_video, duracion_intervalo=60):
     progreso.empty()
     return generar_informe(resultados_intervalos)
 
-def mostrar_grafico_y_resumen(intervalos):
+def mostrar_grafico(intervalos):
     df = pd.DataFrame(intervalos)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    x = [f"{int(i['inicio'])}-{int(i['fin'])}" for i in intervalos]
+    ax.plot(x, df['cortes'], label="Cortes visuales/min", marker='o')
+    ax.plot(x, df['complejidad'], label="Complejidad visual", marker='o')
+    ax.plot(x, df['volumen'], label="Volumen promedio (dB)", marker='o')
+    ax.plot(x, df['densidad_sonora'], label="Densidad sonora", marker='o')
+    ax.set_xlabel("Intervalos (s)")
+    ax.set_ylabel("Valor")
+    ax.set_title("Evolución de indicadores")
+    ax.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    st.pyplot(fig)
 
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        fig, ax = plt.subplots(figsize=(6, 4))
-        x = [f"{int(i['inicio'])}-{int(i['fin'])}" for i in intervalos]
-        ax.plot(x, df['cortes'], label="Cortes visuales/min", marker='o')
-        ax.plot(x, df['complejidad'], label="Complejidad visual", marker='o')
-        ax.plot(x, df['volumen'], label="Volumen promedio (dB)", marker='o')
-        ax.plot(x, df['densidad_sonora'], label="Densidad sonora", marker='o')
-        ax.set_xlabel("Intervalos (s)")
-        ax.set_ylabel("Valor")
-        ax.set_title("Evolución de indicadores")
-        ax.legend()
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        st.pyplot(fig)
-
-    with col2:
-        st.markdown("### 📌 Resumen visual de métricas")
-
-    with st.container():
-        col_v1, col_v2 = st.columns(2)
-        with col_v1:
-            st.metric("Cortes visuales/min (máx)", f"{df['cortes'].max()}", help="Promedio de cambios de escena por minuto")
-            st.metric("Complejidad visual (máx)", f"{df['complejidad'].max()}", help="Número promedio de contornos detectados")
-        with col_v2:
-            st.metric("Volumen promedio (dB)", f"{df['volumen'].max()}", help="Nivel de intensidad sonora en decibelios")
-            st.metric("Densidad sonora (máx)", f"{df['densidad_sonora'].max()}", help="Cantidad de sonidos diferenciados por minuto")
-        style_metric_cards()
-        st.markdown("""
-            <style>
-            [data-testid="metric-container"] {
-                background-color: #f0f0f0;
-                color: #000 !important;
-                border-radius: 12px;
-                padding: 15px;
-                margin: 5px 0;
-                box-shadow: 0 0 5px rgba(0,0,0,0.1);
-            }
-            [data-testid="metric-container"] > div {
-                color: #000 !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-
+def mostrar_resumen(intervalos):
+    df = pd.DataFrame(intervalos)
+    st.markdown("### 📌 Resumen visual de métricas")
+    col_v1, col_v2 = st.columns(2)
+    with col_v1:
+        st.metric("Cortes visuales/min (máx)", f"{df['cortes'].max()}")
+        st.metric("Complejidad visual (máx)", f"{df['complejidad'].max()}")
+    with col_v2:
+        st.metric("Volumen promedio (dB)", f"{df['volumen'].max()}")
+        st.metric("Densidad sonora (máx)", f"{df['densidad_sonora'].max()}")
+    style_metric_cards()
+    st.markdown("""
+        <style>
+        [data-testid="metric-container"] {
+            background-color: #f0f0f0;
+            color: #000 !important;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 5px 0;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        [data-testid="metric-container"] > div {
+            color: #000 !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
